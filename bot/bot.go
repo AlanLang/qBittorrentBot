@@ -1,6 +1,8 @@
 package bot
 
 import (
+	"qBittorrentBot/bot/fsm"
+	"qBittorrentBot/config"
 	"time"
 
 	"github.com/AlanLang/go-qbittorrent/qbt"
@@ -9,6 +11,8 @@ import (
 )
 
 var (
+	// UserState 用户状态，用于标示当前用户操作所在状态
+	UserState map[int64]fsm.UserStatus = make(map[int64]fsm.UserStatus)
 	// B telebot
 	B  *tb.Bot
 	qb *qbt.Client
@@ -25,7 +29,7 @@ type Commands struct {
 func Start() {
 	var err error
 	B, err = tb.NewBot(tb.Settings{
-		Token:  TelegraphToken,
+		Token:  config.TelegraphToken,
 		Poller: &tb.LongPoller{Timeout: 10 * time.Second},
 	})
 
@@ -33,7 +37,7 @@ func Start() {
 		log.Error(err)
 		return
 	}
-	qbInit()
+	// qbInit()
 	setCommands()
 	setHandle()
 	B.Start()
@@ -44,6 +48,7 @@ func setCommands() {
 	commands := []tb.Command{
 		tb.Command{Text: "start", Description: "开始使用"},
 		tb.Command{Text: "help", Description: "使用帮助"},
+		tb.Command{Text: "config", Description: "配置qBittorrent服务器"},
 	}
 
 	if err := B.SetCommands(commands); err != nil {
@@ -54,16 +59,18 @@ func setCommands() {
 func setHandle() {
 	B.Handle("/start", startCmdCtr)
 	B.Handle("/help", helpCmdCtr)
+	B.Handle("/config", configCmdCtr)
+	B.Handle(tb.OnText, textCtr)
 }
 
 func qbInit() {
-	qb = qbt.NewClient(QBittorrentURL)
-	islogin, err := qb.Login(QBittorrentName, QBittorrentPass)
-	if islogin {
-		log.Info("qb login success")
-	}
+	// qb = qbt.NewClient(QBittorrentURL)
+	// islogin, err := qb.Login(QBittorrentName, QBittorrentPass)
+	// if islogin {
+	// 	log.Info("qb login success")
+	// }
 
-	if err != nil {
-		log.Error("qb login failed", "error", err.Error())
-	}
+	// if err != nil {
+	// 	log.Error("qb login failed", "error", err.Error())
+	// }
 }
