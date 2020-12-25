@@ -1,4 +1,4 @@
-module qBittorrenterBot
+module qBittorrentBot
 
 go 1.15
 

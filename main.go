@@ -1,7 +1,7 @@
 package main
 
 import (
-	"qBittorrenterBot/bot"
+	"qBittorrentBot/bot"
 
 	log "github.com/sirupsen/logrus"
 )

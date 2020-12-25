@@ -1,1 +1,1 @@
-# qBittorrenterBot
+# qBittorrentBot
