@@ -57,6 +57,7 @@ func setCommands() {
 }
 
 func setHandle() {
+	B.Handle(&tb.InlineButton{Unique: "qb_update_btn"}, updateQbCtr)
 	B.Handle("/start", startCmdCtr)
 	B.Handle("/help", helpCmdCtr)
 	B.Handle("/config", configCmdCtr)

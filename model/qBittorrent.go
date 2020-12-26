@@ -2,19 +2,10 @@ package model
 
 // QBittorrent qBittorrent服务器
 type QBittorrent struct {
-	Name     string `gorm:"primary_key;"`
-	Path     string
+	User     int64
+	URL      string
 	Username string
 	Password string
-}
-
-// GetAllQb 获取所有qb服务
-func GetAllQb() ([]QBittorrent, error) {
-	var qbs []QBittorrent
-
-	db.Find(&qbs)
-
-	return qbs, nil
 }
 
 // CreateQb 添加qb服务
@@ -23,8 +14,15 @@ func CreateQb(qb QBittorrent) error {
 }
 
 // FineQb 查找qb服务
-func FineQb(name string) QBittorrent {
+func FineQb(user int64) QBittorrent {
 	var qb QBittorrent
-	db.Where(&QBittorrent{Name: name}).First(&qb)
+	db.Where(&QBittorrent{
+		User: user,
+	}).First(&qb)
 	return qb
+}
+
+// UpdateQb 更新qb服务
+func UpdateQb(qb QBittorrent) error {
+	return db.Model(&qb).Updates(qb).Error
 }
