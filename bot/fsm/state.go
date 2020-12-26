@@ -28,3 +28,6 @@ const ChangeQbUserBtn = "ChangeQbUserBtn"
 
 // ChangeQbPassBtn 修改qb服务器密码
 const ChangeQbPassBtn = "ChangeQbPassBtn"
+
+// TestQbConnection 测试qb服务器链接
+const TestQbConnection = "TestQbConnection"

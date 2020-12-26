@@ -16,10 +16,18 @@ func helpCmdCtr(m *tb.Message) {
 	message := `
 	命令：
 	/start 开始使用
+	/list 查看下载列表
 	/help 帮助
 	/config 配置qBittorrent服务器
 	`
 	B.Send(m.Chat, message)
+}
+
+func listCmdCtr(m *tb.Message) {
+	linked := startQbClient(m)
+	if linked {
+		B.Send(m.Chat, "alan")
+	}
 }
 
 func configCmdCtr(m *tb.Message) {
@@ -61,6 +69,13 @@ func configCmdCtr(m *tb.Message) {
 				Data:   fsm.ChangeQbPassBtn,
 			},
 		})
+		updateQbActionBtns = append(updateQbActionBtns, []tb.InlineButton{
+			tb.InlineButton{
+				Unique: "qb_update_btn",
+				Text:   "测试连接",
+				Data:   fsm.TestQbConnection,
+			},
+		})
 		_, _ = B.Send(m.Chat, message, &tb.ReplyMarkup{
 			InlineKeyboard: updateQbActionBtns,
 		})
@@ -84,6 +99,15 @@ func updateQbCtr(c *tb.Callback) {
 	case fsm.ChangeQbPassBtn:
 		{
 			addUserAction(c.Message, "请输入qBittorrent服务器密码", fsm.ChangeQbPass)
+		}
+	case fsm.TestQbConnection:
+		{
+			err := InitQbClient(model.FineQb(c.Message.Chat.ID))
+			if err == nil {
+				B.Send(c.Message.Chat, "qBittorrent服务器连接成功")
+			} else {
+				B.Send(c.Message.Chat, "qBittorrent服务器连接失败")
+			}
 		}
 	}
 }
@@ -122,6 +146,7 @@ func textCtr(m *tb.Message) {
 			}
 			B.Delete(m)
 			B.Send(m.Sender, "qBittorrent服务器配置成功")
+			InitQbClient(model.FineQb(m.Chat.ID))
 		}
 	case fsm.ChangeQbURL:
 		{
@@ -133,6 +158,7 @@ func textCtr(m *tb.Message) {
 			}
 			B.Delete(m)
 			B.Send(m.Sender, "qBittorrent服务器地址修改成功")
+			InitQbClient(model.FineQb(m.Chat.ID))
 		}
 	case fsm.ChangeQbUser:
 		{
@@ -144,6 +170,7 @@ func textCtr(m *tb.Message) {
 			}
 			B.Delete(m)
 			B.Send(m.Sender, "qBittorrent服务器用户名修改成功")
+			InitQbClient(model.FineQb(m.Chat.ID))
 		}
 	case fsm.ChangeQbPass:
 		{
@@ -155,6 +182,7 @@ func textCtr(m *tb.Message) {
 			}
 			B.Delete(m)
 			B.Send(m.Sender, "qBittorrent服务器密码修改成功")
+			InitQbClient(model.FineQb(m.Chat.ID))
 		}
 	default:
 		{
@@ -212,4 +240,16 @@ func addUserAction(m *tb.Message, message string, action fsm.UserStatus) {
 	if err == nil {
 		UserState[m.Chat.ID] = action
 	}
+}
+
+func startQbClient(m *tb.Message) bool {
+	if !qbLinked {
+		err := InitQbClient(model.FineQb(m.Chat.ID))
+		if err != nil {
+			B.Send(m.Chat, "qBittorrent服务器未连接，请使用/config查看服务器配置")
+			return false
+		}
+		return true
+	}
+	return true
 }
