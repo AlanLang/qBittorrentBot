@@ -21,7 +21,7 @@ go run *.go
 ### Docker 部署
 需要映射config目录，目录下包含config.yml文件
 ```
-docker run -d -v ~/config:/config langwenda/qbittorrentbot
+docker run -itd --name qbittorrentbot --restart=always -v /目录/config:/config langwenda/qbittorrentbot
 ```
 ### 使用命令
 ```
