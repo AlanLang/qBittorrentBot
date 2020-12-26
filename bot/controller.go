@@ -3,6 +3,7 @@ package bot
 import (
 	"qBittorrentBot/bot/fsm"
 	"qBittorrentBot/model"
+	"qBittorrentBot/qbt"
 	"strconv"
 	"strings"
 
@@ -36,12 +37,26 @@ func listCmdCtr(m *tb.Message) {
 		message := ""
 		for _, torrent := range s.Torrents {
 			message += torrent.Name + "\n"
-			message += "进度：" + strconv.FormatInt(torrent.Completed*100/torrent.Size, 10) + "%\n"
-			message += "做种：" + strconv.FormatInt(torrent.Uploaded*100/torrent.Completed, 10) + "%\n"
+			message += "进度：" + getDownload(torrent)
+			message += "比率：" + getRate(torrent)
 			message += "\n"
 		}
 		B.Send(m.Chat, message)
 	}
+}
+
+func getDownload(torrent qbt.Torrent) string {
+	if torrent.Size == 0 {
+		return "0%\n"
+	}
+	return strconv.FormatInt(torrent.Completed*100/torrent.Size, 10) + "%\n"
+}
+
+func getRate(torrent qbt.Torrent) string {
+	if torrent.Completed == 0 {
+		return "0%\n"
+	}
+	return strconv.FormatInt(torrent.Uploaded*100/torrent.Completed, 10) + "%\n"
 }
 
 func configCmdCtr(m *tb.Message) {
