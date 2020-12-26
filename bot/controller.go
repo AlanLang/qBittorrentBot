@@ -26,7 +26,17 @@ func helpCmdCtr(m *tb.Message) {
 func listCmdCtr(m *tb.Message) {
 	linked := startQbClient(m)
 	if linked {
-		B.Send(m.Chat, "alan")
+		s, err := qbClient.Sync("0")
+		if err != nil {
+			B.Send(m.Chat, "下载列表获取异常")
+		}
+		message := ""
+		for _, torrent := range s.Torrents {
+			message += torrent.Name
+			message += "进度：" + ()
+		}
+		log.Info(s.Rid)
+		B.Send(m.Chat, message)
 	}
 }
 

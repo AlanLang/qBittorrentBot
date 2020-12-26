@@ -2,8 +2,8 @@ package bot
 
 import (
 	"qBittorrentBot/model"
+	"qBittorrentBot/qbt"
 
-	"github.com/AlanLang/go-qbittorrent/qbt"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -17,15 +17,13 @@ func InitQbClient(qb model.QBittorrent) error {
 	} else {
 		qbClient.URL = qb.URL
 	}
-	islogin, err := qbClient.Login(qb.Username, qb.Password)
-	if islogin {
-		log.Info("qb login success")
-		qbLinked = true
-	}
-
+	err := qbClient.Login(qb.Username, qb.Password)
 	if err != nil {
 		qbLinked = false
 		log.Error("qb login failed", "error", err.Error())
 	}
+	log.Info("qb login success")
+	qbLinked = true
+
 	return err
 }
