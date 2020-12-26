@@ -1,5 +1,6 @@
 # qBittorrentBot
 ![build](https://github.com/AlanLang/qBittorrentBot/workflows/build/badge.svg)
+
 ![](./screenshot/image.png)
 ## 功能列表
 * 配置qBittorrentBot服务器
