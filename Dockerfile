@@ -1,10 +1,11 @@
 # Build go
-FROM golang:latest AS serverBuilder
+FROM golang:1.13-alpine as builder
 COPY . /qBittorrentBot
-WORKDIR /qBittorrentBot
-RUN go build -ldflags "-s -w" -o qBittorrentBot
+RUN apk add git make gcc libc-dev && \
+    cd /qBittorrentBot && make build
 
-FROM golang:latest
+FROM alpine:latest
 WORKDIR /app
-COPY --from=serverBuilder /qBittorrentBot/qBittorrentBot /app/.
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+COPY --from=builder /qBittorrentBot/qBittorrentBot /app/.
 ENTRYPOINT ["./qBittorrentBot"]
