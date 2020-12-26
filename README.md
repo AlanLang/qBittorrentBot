@@ -1,5 +1,5 @@
 # qBittorrentBot
-
+![build](https://github.com/AlanLang/qBittorrentBot/workflows/build/badge.svg)
 ## 功能列表
 * 配置qBittorrentBot服务器
 * 查看下载进度
