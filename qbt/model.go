@@ -4,6 +4,7 @@ package qbt
 type Torrent struct {
 	AddedOn       int    `json:"added_on"`
 	Category      string `json:"category"`
+	Completed     int64  `json:"completed"`
 	CompletionOn  int64  `json:"completion_on"`
 	Dlspeed       int    `json:"dlspeed"`
 	Eta           int    `json:"eta"`
@@ -19,10 +20,11 @@ type Torrent struct {
 	Ratio         int    `json:"ratio"`
 	SavePath      string `json:"save_path"`
 	SeqDl         bool   `json:"seq_dl"`
-	Size          int    `json:"size"`
+	Size          int64  `json:"size"`
 	State         string `json:"state"`
 	SuperSeeding  bool   `json:"super_seeding"`
 	Upspeed       int    `json:"upspeed"`
+	Uploaded      int64  `json:"uploaded"`
 }
 
 //Tracker holds a tracker object from qbittorrent
@@ -67,4 +69,8 @@ type Sync struct {
 		UseAltSpeedLimits bool   `json:"use_alt_speed_limits"`
 	} `json:"server_state"`
 	Torrents map[string]Torrent `json:"torrents"`
+}
+
+type AddForm struct {
+	
 }

@@ -71,6 +71,24 @@ func (client *Client) Sync(rid string) (Sync, error) {
 	return s, nil
 }
 
+// Add 新增下载
+func (client *Client) Add(url string) error {
+	credentials := make(map[string]string)
+	credentials["urls"] = url
+	credentials["savepath"] = "/downloads/"
+	credentials["autoTMM"] = "false"
+	credentials["paused"] = "false"
+	credentials["root_folder"] = "true"
+
+	resp, err := client.post("api/v2/torrents/add", credentials)
+	if err != nil {
+		return err
+	} else if resp.Status != "200 OK" { // check for correct status code
+		return wrapper.Wrap(ErrBadResponse, "couldnt log in")
+	}
+	return nil
+}
+
 //post will perform a POST request with no content-type specified
 func (client *Client) post(endpoint string, opts map[string]string) (*http.Response, error) {
 	bodyBuf := &bytes.Buffer{}

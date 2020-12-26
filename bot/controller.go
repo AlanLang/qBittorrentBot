@@ -3,6 +3,8 @@ package bot
 import (
 	"qBittorrentBot/bot/fsm"
 	"qBittorrentBot/model"
+	"strconv"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	tb "gopkg.in/tucnak/telebot.v2"
@@ -19,6 +21,7 @@ func helpCmdCtr(m *tb.Message) {
 	/list 查看下载列表
 	/help 帮助
 	/config 配置qBittorrent服务器
+	url 添加磁力下载
 	`
 	B.Send(m.Chat, message)
 }
@@ -32,10 +35,11 @@ func listCmdCtr(m *tb.Message) {
 		}
 		message := ""
 		for _, torrent := range s.Torrents {
-			message += torrent.Name
-			message += "进度：" + ()
+			message += torrent.Name + "\n"
+			message += "进度：" + strconv.FormatInt(torrent.Completed*100/torrent.Size, 10) + "%\n"
+			message += "做种：" + strconv.FormatInt(torrent.Uploaded*100/torrent.Completed, 10) + "%\n"
+			message += "\n"
 		}
-		log.Info(s.Rid)
 		B.Send(m.Chat, message)
 	}
 }
@@ -96,7 +100,7 @@ func configCmdCtr(m *tb.Message) {
 }
 
 func updateQbCtr(c *tb.Callback) {
-	_ = B.Delete(c.Message)
+	// _ = B.Delete(c.Message)
 	switch c.Data {
 	case fsm.ChangeQbURLBtn:
 		{
@@ -196,6 +200,22 @@ func textCtr(m *tb.Message) {
 		}
 	default:
 		{
+			linked := startQbClient(m)
+			if linked {
+				url := m.Text
+				if strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://") {
+					err := qbClient.Add(url)
+					if err != nil {
+						log.Error(err)
+						B.Send(m.Sender, "添加下载失败")
+						return
+					}
+					B.Delete(m)
+					B.Send(m.Sender, "已成功添加下载")
+				} else {
+					B.Send(m.Sender, "无法识别的命令格式")
+				}
+			}
 		}
 	}
 }
