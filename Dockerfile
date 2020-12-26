@@ -8,4 +8,5 @@ FROM alpine:latest
 WORKDIR /app
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /qBittorrentBot/qBittorrentBot /app/.
+VOLUME /app/config
 ENTRYPOINT ["./qBittorrentBot"]
