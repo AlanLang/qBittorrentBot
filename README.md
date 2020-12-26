@@ -17,7 +17,10 @@ git clone https://github.com/AlanLang/qBittorrentBot.git
 go run *.go
 ```
 ### Docker 部署
+需要映射config目录，目录下包含config.yml文件
+```
 docker run -d -v ~/config:/config langwenda/qBittorrentBot
+```
 ### 使用命令
 ```
 /start 开始使用
