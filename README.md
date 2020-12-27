@@ -26,7 +26,8 @@ docker run -itd --name qbittorrentbot --restart=always -v /目录/config:/app/co
 ### 使用命令
 ```
 /start 开始使用
-/list 查看下载列表
+/list 查看正在下载的任务
+/all 查看所有任务
 /help 帮助
 /config 配置qBittorrent服务器
 url 添加磁力下载

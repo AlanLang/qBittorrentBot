@@ -36,6 +36,29 @@ func listCmdCtr(m *tb.Message) {
 		}
 		message := ""
 		for _, torrent := range s.Torrents {
+			if getDownload(torrent) != "100%" {
+				message += torrent.Name + "\n"
+				message += "进度：" + getDownload(torrent)
+				message += "比率：" + getRate(torrent)
+				message += "\n"
+			}
+		}
+		if message == "" {
+			message += "无正在下载的任务"
+		}
+		B.Send(m.Chat, message)
+	}
+}
+
+func allCmdCtr(m *tb.Message) {
+	linked := startQbClient(m)
+	if linked {
+		s, err := qbClient.Sync("0")
+		if err != nil {
+			B.Send(m.Chat, "下载列表获取异常")
+		}
+		message := ""
+		for _, torrent := range s.Torrents {
 			message += torrent.Name + "\n"
 			message += "进度：" + getDownload(torrent)
 			message += "比率：" + getRate(torrent)
