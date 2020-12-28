@@ -56,6 +56,17 @@ func (client *Client) Login(username string, password string) error {
 	return nil
 }
 
+// IsLogin IsLogin
+func (client *Client) IsLogin() bool {
+	resp, err := client.get("api/v2/app/version", make(map[string]string))
+	if err != nil {
+		return false
+	} else if resp.Status != "200 OK" {
+		return true
+	}
+	return false
+}
+
 //Sync returns the server state and list of torrents in one struct
 func (client *Client) Sync(rid string) (Sync, error) {
 	var s Sync

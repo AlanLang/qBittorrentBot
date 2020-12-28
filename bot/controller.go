@@ -315,13 +315,10 @@ func addUserAction(m *tb.Message, message string, action fsm.UserStatus) {
 }
 
 func startQbClient(m *tb.Message) bool {
-	if !qbLinked {
-		err := InitQbClient(model.FineQb(m.Chat.ID))
-		if err != nil {
-			B.Send(m.Chat, "qBittorrent服务器未连接，请使用/config查看服务器配置")
-			return false
-		}
-		return true
+	err := InitQbClient(model.FineQb(m.Chat.ID))
+	if err != nil {
+		B.Send(m.Chat, "qBittorrent服务器未连接，请使用/config查看服务器配置")
+		return false
 	}
 	return true
 }

@@ -8,7 +8,6 @@ import (
 )
 
 var qbClient *qbt.Client
-var qbLinked = false
 
 // InitQbClient 初始化
 func InitQbClient(qb model.QBittorrent) error {
@@ -17,13 +16,14 @@ func InitQbClient(qb model.QBittorrent) error {
 	} else {
 		qbClient.URL = qb.URL
 	}
-	err := qbClient.Login(qb.Username, qb.Password)
-	if err != nil {
-		qbLinked = false
-		log.Error("qb login failed", "error", err.Error())
-	}
-	log.Info("qb login success")
-	qbLinked = true
+	if !qbClient.IsLogin() {
+		err := qbClient.Login(qb.Username, qb.Password)
+		if err != nil {
+			log.Error("qb login failed", "error", err.Error())
+		}
+		log.Info("qb login success")
 
-	return err
+		return err
+	}
+	return nil
 }
