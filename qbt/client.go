@@ -62,9 +62,9 @@ func (client *Client) IsLogin() bool {
 	if err != nil {
 		return false
 	} else if resp.Status != "200 OK" {
-		return true
+		return false
 	}
-	return false
+	return true
 }
 
 //Sync returns the server state and list of torrents in one struct
