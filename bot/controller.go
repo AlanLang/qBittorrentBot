@@ -36,7 +36,7 @@ func listCmdCtr(m *tb.Message) {
 		}
 		message := ""
 		for _, torrent := range s.Torrents {
-			if getDownload(torrent) != "100%" {
+			if torrent.Size != torrent.Completed {
 				message += torrent.Name + "\n"
 				message += "进度：" + getDownload(torrent)
 				message += "比率：" + getRate(torrent)
