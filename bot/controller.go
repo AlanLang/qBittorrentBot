@@ -47,6 +47,8 @@ func listCmdCtr(m *tb.Message) {
 			message += "无正在下载的任务"
 		}
 		B.Send(m.Chat, message)
+	} else {
+		log.Error("/list 无法连接到服务器")
 	}
 }
 
@@ -65,6 +67,8 @@ func allCmdCtr(m *tb.Message) {
 			message += "\n"
 		}
 		B.Send(m.Chat, message)
+	} else {
+		log.Error("/all 无法连接到服务器")
 	}
 }
 
