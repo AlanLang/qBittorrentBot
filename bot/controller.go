@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"errors"
 	"qBittorrentBot/bot/fsm"
 	"qBittorrentBot/model"
 	"qBittorrentBot/qbt"
@@ -27,49 +28,46 @@ func helpCmdCtr(m *tb.Message) {
 	B.Send(m.Chat, message)
 }
 
+// listCmdCtr 获取正在下载的列表
 func listCmdCtr(m *tb.Message) {
-	linked := startQbClient(m)
-	if linked {
-		s, err := qbClient.Sync("0")
-		if err != nil {
-			B.Send(m.Chat, "下载列表获取异常")
-		}
-		message := ""
-		for _, torrent := range s.Torrents {
-			if torrent.Completed == 0 || torrent.Size != torrent.Completed {
-				message += torrent.Name + "\n"
-				message += "进度：" + getDownload(torrent)
-				message += "比率：" + getRate(torrent)
-				message += "\n"
-			}
-		}
-		if message == "" {
-			message += "无正在下载的任务"
-		}
-		B.Send(m.Chat, message)
-	} else {
-		log.Error("/list 无法连接到服务器")
+	torrents, err := getDownloadList(model.FineQb(m.Chat.ID))
+	if err != nil {
+		log.Error(err)
+		B.Send(m.Chat, errors.New("无法连接到qBittorrent, 请查看配置"))
 	}
-}
-
-func allCmdCtr(m *tb.Message) {
-	linked := startQbClient(m)
-	if linked {
-		s, err := qbClient.Sync("0")
-		if err != nil {
-			B.Send(m.Chat, "下载列表获取异常")
-		}
-		message := ""
-		for _, torrent := range s.Torrents {
+	message := ""
+	for _, torrent := range torrents {
+		if torrent.Completed == 0 || torrent.Size != torrent.Completed {
 			message += torrent.Name + "\n"
 			message += "进度：" + getDownload(torrent)
 			message += "比率：" + getRate(torrent)
 			message += "\n"
 		}
-		B.Send(m.Chat, message)
-	} else {
-		log.Error("/all 无法连接到服务器")
 	}
+	if message == "" {
+		message += "无正在下载的任务"
+	}
+	B.Send(m.Chat, message)
+}
+
+// allCmdCtr 获取全部列表
+func allCmdCtr(m *tb.Message) {
+	torrents, err := getDownloadList(model.FineQb(m.Chat.ID))
+	if err != nil {
+		log.Error(err)
+		B.Send(m.Chat, errors.New("无法连接到qBittorrent, 请查看配置"))
+	}
+	message := ""
+	for _, torrent := range torrents {
+		message += torrent.Name + "\n"
+		message += "进度：" + getDownload(torrent)
+		message += "比率：" + getRate(torrent)
+		message += "\n"
+	}
+	if message == "" {
+		message += "无正在下载的任务"
+	}
+	B.Send(m.Chat, message)
 }
 
 func getDownload(torrent qbt.Torrent) string {
@@ -242,21 +240,18 @@ func textCtr(m *tb.Message) {
 		}
 	default:
 		{
-			linked := startQbClient(m)
-			if linked {
-				url := m.Text
-				if strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://") {
-					err := qbClient.Add(url)
-					if err != nil {
-						log.Error(err)
-						B.Send(m.Sender, "添加下载失败")
-						return
-					}
-					B.Delete(m)
-					B.Send(m.Sender, "已成功添加下载")
-				} else {
-					B.Send(m.Sender, "无法识别的命令格式")
+			url := m.Text
+			if strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://") {
+				err := download(model.FineQb(m.Chat.ID), url)
+				if err != nil {
+					log.Error(err)
+					B.Send(m.Sender, "添加下载失败")
+					return
 				}
+				B.Delete(m)
+				B.Send(m.Sender, "已成功添加下载")
+			} else {
+				B.Send(m.Sender, "无法识别的命令格式")
 			}
 		}
 	}
@@ -312,13 +307,4 @@ func addUserAction(m *tb.Message, message string, action fsm.UserStatus) {
 	if err == nil {
 		UserState[m.Chat.ID] = action
 	}
-}
-
-func startQbClient(m *tb.Message) bool {
-	err := InitQbClient(model.FineQb(m.Chat.ID))
-	if err != nil {
-		B.Send(m.Chat, "qBittorrent服务器未连接，请使用/config查看服务器配置")
-		return false
-	}
-	return true
 }

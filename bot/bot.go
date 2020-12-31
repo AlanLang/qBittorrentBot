@@ -35,7 +35,6 @@ func Start() {
 		log.Error(err)
 		return
 	}
-	// qbInit()
 	setCommands()
 	setHandle()
 	B.Start()
