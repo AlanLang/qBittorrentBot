@@ -62,6 +62,7 @@ func allCmdCtr(m *tb.Message) {
 		message += torrent.Name + "\n"
 		message += "进度：" + getDownload(torrent)
 		message += "比率：" + getRate(torrent)
+		message += "状态：" + torrent.State
 		message += "\n"
 	}
 	if message == "" {

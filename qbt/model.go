@@ -72,5 +72,4 @@ type Sync struct {
 }
 
 type AddForm struct {
-	
 }
