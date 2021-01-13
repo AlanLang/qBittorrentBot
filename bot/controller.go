@@ -2,7 +2,6 @@ package bot
 
 import (
 	"errors"
-	"fmt"
 	"qBittorrentBot/bot/fsm"
 	"qBittorrentBot/model"
 	"strconv"
@@ -105,7 +104,7 @@ func getRate(torrent qbt.Torrent) string {
 	if torrent.Completed == 0 {
 		return "0%\n"
 	}
-	return fmt.Sprintf("%.2f", torrent.Uploaded/torrent.Completed)
+	return strconv.FormatInt(torrent.Uploaded*100/torrent.Completed, 10) + "%\n"
 }
 
 func configCmdCtr(m *tb.Message) {
