@@ -26,7 +26,7 @@ func getDownloadList(qb model.QBittorrent) (map[string]qbt.Torrent, error) {
 	if err != nil {
 		return nil, err
 	}
-	s, e := qbClient.Sync("0")
+	s, e := qbClient.List()
 	return s.Torrents, e
 }
 
@@ -35,5 +35,5 @@ func download(qb model.QBittorrent, url string) error {
 	if err != nil {
 		return err
 	}
-	return qbClient.Add(url)
+	return qbClient.Download(url)
 }
