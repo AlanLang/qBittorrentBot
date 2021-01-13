@@ -45,6 +45,7 @@ func setCommands() {
 	commands := []tb.Command{
 		tb.Command{Text: "start", Description: "开始使用"},
 		tb.Command{Text: "list", Description: "查看正在下载的任务"},
+		tb.Command{Text: "active", Description: "查看活动的任务"},
 		tb.Command{Text: "all", Description: "查看所有任务"},
 		tb.Command{Text: "help", Description: "使用帮助"},
 		tb.Command{Text: "config", Description: "配置qBittorrent服务器"},
@@ -60,6 +61,7 @@ func setHandle() {
 	B.Handle("/start", startCmdCtr)
 	B.Handle("/list", listCmdCtr)
 	B.Handle("/all", allCmdCtr)
+	B.Handle("/active", activeCmdCtr)
 	B.Handle("/help", helpCmdCtr)
 	B.Handle("/config", configCmdCtr)
 	B.Handle(tb.OnText, textCtr)

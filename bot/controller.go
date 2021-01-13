@@ -2,11 +2,13 @@ package bot
 
 import (
 	"errors"
+	"fmt"
 	"qBittorrentBot/bot/fsm"
 	"qBittorrentBot/model"
-	"qBittorrentBot/qbt"
 	"strconv"
 	"strings"
+
+	"github.com/AlanLang/qbt"
 
 	log "github.com/sirupsen/logrus"
 	tb "gopkg.in/tucnak/telebot.v2"
@@ -25,6 +27,27 @@ func helpCmdCtr(m *tb.Message) {
 	/config 配置qBittorrent服务器
 	url 添加磁力下载
 	`
+	B.Send(m.Chat, message)
+}
+
+func activeCmdCtr(m *tb.Message) {
+	torrents, err := getDownloadList(model.FineQb(m.Chat.ID))
+	if err != nil {
+		log.Error(err)
+		B.Send(m.Chat, errors.New("无法连接到qBittorrent, 请查看配置"))
+	}
+	message := ""
+	for _, torrent := range torrents {
+		if torrent.Dlspeed > 0 || torrent.Upspeed > 0 {
+			message += torrent.Name + "\n"
+			message += "进度：" + getDownload(torrent)
+			message += "比率：" + getRate(torrent)
+			message += "\n"
+		}
+	}
+	if message == "" {
+		message += "无活动的任务"
+	}
 	B.Send(m.Chat, message)
 }
 
@@ -82,7 +105,7 @@ func getRate(torrent qbt.Torrent) string {
 	if torrent.Completed == 0 {
 		return "0%\n"
 	}
-	return strconv.FormatInt(torrent.Uploaded*100/torrent.Completed, 10) + "%\n"
+	return fmt.Sprintf("%.2f", torrent.Uploaded/torrent.Completed)
 }
 
 func configCmdCtr(m *tb.Message) {

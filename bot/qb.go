@@ -2,9 +2,8 @@ package bot
 
 import (
 	"qBittorrentBot/model"
-	"qBittorrentBot/qbt"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/AlanLang/qbt"
 )
 
 var qbClient *qbt.Client
@@ -12,18 +11,12 @@ var qbClient *qbt.Client
 // InitQbClient 初始化
 func InitQbClient(qb model.QBittorrent) error {
 	if qbClient == nil {
-		qbClient = qbt.NewClient(qb.URL)
+		qbClient, _ = qbt.New(qb.URL, qb.Username, qb.Password)
 	} else {
-		qbClient.URL = qb.URL
-	}
-	if !qbClient.IsLogin() {
-		err := qbClient.Login(qb.Username, qb.Password)
-		if err != nil {
-			log.Error("qb login failed", "error", err.Error())
-		}
-		log.Info("qb login success")
-
-		return err
+		qbClient.SetConfig(qbt.Config{
+			URL: qb.URL,
+		})
+		// qbClient.URL = qb.URL
 	}
 	return nil
 }
