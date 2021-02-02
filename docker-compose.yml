@@ -1,0 +1,15 @@
+version: "3.4"
+services:
+ qBittorrentBot:
+  build: .
+  image: qBittorrentBot
+  privileged: true
+  restart: always
+  tty: true
+  stdin_open: true
+  deploy:
+    update_config:
+      order: start-first
+  container_name: qBittorrentBot
+  volumes:
+    - "/volume1/docker/qBittorrentBot:/app/config"
