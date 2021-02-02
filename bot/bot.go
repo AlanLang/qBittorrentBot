@@ -47,6 +47,7 @@ func setCommands() {
 		tb.Command{Text: "list", Description: "查看正在下载的任务"},
 		tb.Command{Text: "active", Description: "查看活动的任务"},
 		tb.Command{Text: "all", Description: "查看所有任务"},
+		tb.Command{Text: "free", Description: "查看剩余空间"},
 		tb.Command{Text: "help", Description: "使用帮助"},
 		tb.Command{Text: "config", Description: "配置qBittorrent服务器"},
 	}
@@ -64,5 +65,6 @@ func setHandle() {
 	B.Handle("/active", activeCmdCtr)
 	B.Handle("/help", helpCmdCtr)
 	B.Handle("/config", configCmdCtr)
+	B.Handle("/free", freeCmdCtr)
 	B.Handle(tb.OnText, textCtr)
 }

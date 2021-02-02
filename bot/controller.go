@@ -107,6 +107,10 @@ func getRate(torrent qbt.Torrent) string {
 	return strconv.FormatInt(torrent.Uploaded*100/torrent.Completed, 10) + "%\n"
 }
 
+func freeCmdCtr(m *tb.Message) {
+	B.Send(m.Chat, "待开发")
+}
+
 func configCmdCtr(m *tb.Message) {
 	userID := m.Chat.ID
 	qb := model.FineQb(userID)
