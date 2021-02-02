@@ -18,6 +18,7 @@ db_log: 是否生成数据库日志，默认为false
 git clone https://github.com/AlanLang/qBittorrentBot.git
 go run *.go
 ```
+
 ### Docker 部署
 需要映射config目录，目录下包含config.yml文件
 ```
