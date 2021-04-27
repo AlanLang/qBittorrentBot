@@ -1,8 +1,8 @@
 version: "3.4"
 services:
- qBittorrentBot:
+ qbittorrent_bot:
   build: .
-  image: qBittorrentBot
+  image: qbittorrent_bot
   privileged: true
   restart: always
   tty: true
@@ -10,6 +10,6 @@ services:
   deploy:
     update_config:
       order: start-first
-  container_name: qBittorrentBot
+  container_name: qbittorrent_bot
   volumes:
     - "/volume1/docker/qBittorrentBot:/app/config"
